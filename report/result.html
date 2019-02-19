@@ -5,7 +5,7 @@
     <title>自动化测试报告</title>
     <meta name="generator" content="HTMLTestRunner 0.9.1"/>
     <meta http-equiv="Content-Type" content="text/html;charset="utf-8"/>
-    <script type="text/javascript" src="C:\Users\Administrator\PycharmProjects\untited4\Apitest\report\result.json" charset="gbk"></script>
+    <script type="text/javascript" src="C:\Users\Administrator\PycharmProjects\Apitest\report\result.json" charset="gbk"></script>
     <link href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/echarts/3.8.5/echarts.common.min.js"></script>
     <!-- <script type="text/javascript" src="js/echarts.common.min.js"></script> -->
@@ -463,9 +463,9 @@
         
     <div class='page-header'>
         <h1 id="title">自动化测试报告</h1>
-    <p class='attribute'><strong>开始时间:</strong> 2019-01-08 10:11:39</p>
-<p class='attribute'><strong>运行时长:</strong> 0:00:01.780000</p>
-<p class='attribute'><strong>测试结果:</strong> 通过 3</p>
+    <p class='attribute'><strong>开始时间:</strong> 2019-02-19 11:11:49</p>
+<p class='attribute'><strong>运行时长:</strong> 0:00:00.848000</p>
+<p class='attribute'><strong>测试结果:</strong> 通过 2 失败 1</p>
 
     </div>
     <!--<div style="float: left;width:50%;"><p class='description'>详细测试用例结果</p></div>-->
@@ -479,10 +479,10 @@
         
     <div id="btn-group">
     <div class="btn-group btn-group-sm">
-        <a class="btn btn-primary" onclick='javascript:showCase(0)'>概要{ 100.00% }</a>
+        <a class="btn btn-primary" onclick='javascript:showCase(0)'>概要{ 66.67% }</a>
         <a class="btn btn-warning" onclick='javascript:showCase(4)'>错误{ 0 }</a>
-        <a class="btn btn-danger" onclick='javascript:showCase(1)' style='background:red'>失败{ 0 }</a>
-        <a class="btn btn-success" onclick='javascript:showCase(2)'>通过{ 3 }</a>
+        <a class="btn btn-danger" onclick='javascript:showCase(1)' style='background:red'>失败{ 1 }</a>
+        <a class="btn btn-success" onclick='javascript:showCase(2)'>通过{ 2 }</a>
         <a class="btn btn-info" onclick='javascript:showCase(3)'>所有{ 3 }</a>
     </div>
     <p></p>
@@ -506,40 +506,47 @@
             <th>错误截图</th>
         </tr>
         
-    <tr class='passClass'>
+    <tr class='failClass'>
         <td>test_api.Test_api</td>
         <td>3</td>
-        <td>3</td>
-        <td>0</td>
+        <td>2</td>
+        <td>1</td>
         <td>0</td>
         <td><a href="javascript:showClassDetail('c1',3)">详情</a></td>
         <td>&nbsp;</td>
     </tr>
 
-<tr id='pt1.1' class='hiddenRow'>
-    <td class='passCase'><div class='testcase'>test_api_1_用户令牌正常_视频不存在</div></td>
+<tr id='ft1.1' class='none'>
+    <td class='failCase'><div class='testcase'>test_api_1_用户令牌正常_视频不存在</div></td>
     <td colspan='5' align='center'>
 
     <!--css div popup start-->
-    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt1.1')" >
-        通过</a>
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft1.1')" >
+        失败</a>
 
-    <div id='div_pt1.1' class="popup_window">
+    <div id='div_ft1.1' class="popup_window">
         <div style='text-align: right; color:red;cursor:pointer'>
-            <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.1').style.display = 'none' " >
+            <a onfocus='this.blur();' onclick="document.getElementById('div_ft1.1').style.display = 'none' " >
                [x]</a>
         </div>
-        <pre>pt1.1: H
-*********正在执行用例*********t_001*******************
+        <pre>ft1.1: 
+ *********正在执行用例*********t_001******************* 
+
 请求方式：get,请求url：https://api.9dcj.com.cn/Api/video/v1/detail
 get请求参数：{'accesstoken': 'wht1-token-428037d6e589126de4e9c54c20962c37', 'videoId': '2024'}
 C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\lib\site-packages\urllib3\connectionpool.py:857: InsecureRequestWarning: Unverified HTTPS request is being made. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#ssl-warnings
   InsecureRequestWarning)
 接口返回信息：{"code":411,"msg":"数据异常","result":"视频不存在"}
-Excel期望值：存在
-测试结果为：t_001----&gt;pass
-期望结果-&gt;：存在
+Excel期望值：杨盼
+测试结果为：t_001----&gt;fail
+期望结果-&gt;：杨盼
 实际结果-&gt;：{"code":411,"msg":"数据异常","result":"视频不存在"}
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\lib\site-packages\ddt.py", line 154, in wrapper
+    return func(self, *args, **kwargs)
+  File "C:\Users\Administrator\PycharmProjects\Apitest\case\test_api.py", line 54, in test_api
+    self.assertIn(check , res_text,'测试失败')
+AssertionError: '杨盼' not found in '{"code":411,"msg":"数据异常","result":"视频不存在"}' : 测试失败
 </pre>
     </div>
     <!--css div popup end-->
@@ -561,8 +568,9 @@ Excel期望值：存在
             <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.2').style.display = 'none' " >
                [x]</a>
         </div>
-        <pre>pt1.2: H
-*********正在执行用例*********t_002*******************
+        <pre>pt1.2: 
+ *********正在执行用例*********t_002******************* 
+
 请求方式：get,请求url：https://api.9dcj.com.cn/Api/video/v1/detail
 get请求参数：{'accesstoken': 'wht1-token-a72564d84aa7b5f119e0b107e5c66b3a', 'videoId': '500142'}
 C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\lib\site-packages\urllib3\connectionpool.py:857: InsecureRequestWarning: Unverified HTTPS request is being made. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#ssl-warnings
@@ -593,8 +601,9 @@ Excel期望值：{"code":401,"msg":"未授权","result":"用户未登录"}
             <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.3').style.display = 'none' " >
                [x]</a>
         </div>
-        <pre>pt1.3: H
-*********正在执行用例*********t_003*******************
+        <pre>pt1.3: 
+ *********正在执行用例*********t_003******************* 
+
 请求方式：get,请求url：https://api.9dcj.com.cn/Api/video/v1/detail
 get请求参数：{'accesstoken': 'wht1-token-428037d6e589126de4e9c54c20962c3', 'videoId': '2024'}
 C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\lib\site-packages\urllib3\connectionpool.py:857: InsecureRequestWarning: Unverified HTTPS request is being made. Adding certificate verification is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#ssl-warnings
@@ -615,8 +624,8 @@ Excel期望值：{"code":401,"msg":"未授权","result":"用户未登录"}
         <tr id='total_row'>
             <td>总计</td>
             <td>3</td>
-            <td>3</td>
-            <td>0</td>
+            <td>2</td>
+            <td>1</td>
             <td>0</td>
             <td>&nbsp;</td>
             <th>&nbsp;</th>
@@ -653,8 +662,8 @@ Excel期望值：{"code":401,"msg":"未授权","result":"用户未登录"}
                     radius : '60%',
                     center: ['50%', '60%'],
                     data:[
-                        {value:3, name:'通过'},
-                        {value:0, name:'失败'},
+                        {value:2, name:'通过'},
+                        {value:1, name:'失败'},
                         {value:0, name:'错误'}
                     ],
                     itemStyle: {

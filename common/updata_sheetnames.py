@@ -6,7 +6,7 @@ import xlrd
 from openpyxl import load_workbook
 #修改sheets名字方法
 def updata_sheetnames(sheetsa = 'Sheet1'):
-    filename = '../case/demo-text.xlsx'#获取路径
+    filename = '../case/demotext.xlsx'#获取路径
     wb = load_workbook(filename)#打开文件
     sheets1 = wb.sheetnames#获取sheet名称
     sheet1 = wb[sheets1[0]]#获取第一个sheet名称

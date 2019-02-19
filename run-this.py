@@ -3,9 +3,13 @@ import unittest
 from Apitest.common import HTMLTestRunner_Chart
 from Apitest.common import readmail
 import os
+#获取当前目录
 curpath = os.path.dirname(os.path.realpath(__file__))
+#获取当前的report目录
 report_path = os.path.join(curpath, "report")
+#如果不存在该目录，则创建
 if not os.path.exists(report_path): os.mkdir(report_path)
+#获取目录case
 case_path = os.path.join(curpath, "case")
 def add_case(casepath=case_path, rule="test*.py"):
     '''加载所有的测试用例'''
