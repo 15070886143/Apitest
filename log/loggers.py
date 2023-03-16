@@ -10,7 +10,7 @@ class logger(object):
         self.logger.setLevel(logging.DEBUG)
         if not self.logger.handlers:
             rq = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
-            log_name = '../data/log' + rq + '.log'
+            log_name = f'../data/log{rq}.log'
 
             formafer = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
             logging.basicConfig(filename=log_name,

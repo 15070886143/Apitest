@@ -43,14 +43,22 @@ def sendMail():
     #对附件进行转码
     encoders.encode_base64 ( part1 )
     # 添加头部方法，并解决中文附件名乱码问题
-    part1.add_header ( 'Content-Disposition' , 'attachment' , filename = ('gbk' , '' , '%s' % result_htmlbt))
+    part1.add_header(
+        'Content-Disposition',
+        'attachment',
+        filename=('gbk', '', f'{result_htmlbt}'),
+    )
     #将内容主题添加到msg正文
     msg.attach ( part1 )
     #发送文档附件)
     part2 = MIMEBase ( 'application' , 'octet-stream' )#'octet-stream': binary data   创建附件对象
     part2.set_payload ( open ( result_xslx , 'rb' ).read ( ) )  # 将附件源文件加载到附件对象
     encoders.encode_base64 ( part2 )
-    part2.add_header ( 'Content-Disposition' , 'attachment' , filename = ('gbk' , '' , '%s' % result_excelbt) )  # 给附件添加头文件
+    part2.add_header(
+        'Content-Disposition',
+        'attachment',
+        filename=('gbk', '', f'{result_excelbt}'),
+    )
     msg.attach ( part2 )
     try:
         #定义smtp邮件格式，传递地址和端口，默认465
