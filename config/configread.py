@@ -21,11 +21,7 @@ class ReadConfig:
         self.cf.read(configpath,encoding='utf-8')
 
     def get_email(self,data):#定义一个参数
-        #获取ini文件里面emali下所有的optinons，属性值
-        value = self.cf.get("emali",data)
-        #返回值，方便其他模块调用
-        return value
+        return self.cf.get("emali",data)
     def get_db(self,data):
-        value = self.cf.get("mongdb",data)
-        return value
+        return self.cf.get("mongdb",data)
 

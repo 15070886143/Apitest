@@ -29,18 +29,10 @@ class ExcelUtil(object):
         else:
             #设置空list，用来存储文件中的数据
             r = []
-            #设置起始值
-
-            #设置遍历的起始行数
-            j = 1
-
             #因为第一行是标题所以总行数要-1
-            for i in list(range(self.rowNum-1)):
+            for j, i in enumerate(list(range(self.rowNum-1)), start=1):
                 #创建空对象
-                s = {}
-
-                # 从第二行取对应values值
-                s['rowNum'] = i+2#当前i=0
+                s = {'rowNum': i + 2}
 
                 #values=第二行的数据，此时j是1
                 values = self.table.row_values(j)
@@ -53,9 +45,6 @@ class ExcelUtil(object):
 
                 #因为val值赋给了keys，所以把值s拿出来放到新建的list中r
                 r.append(s)
-
-                #从一行开始读取数据，最大为rowNum的行数
-                j += 1
 
             return r
 

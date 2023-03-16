@@ -858,13 +858,7 @@ class Template_mixin(object):
     # -------------------- The end of the Template class -------------------
     def __getattribute__(self, item):
         value = object.__getattribute__(self, item)
-        if PY3K:
-            return value
-        else:
-            if isinstance(value, str):
-                return value.decode("utf-8")
-            else:
-                return value
+        return value.decode("utf-8") if not PY3K and isinstance(value, str) else value
 
 
 TestResult = unittest.TestResult
@@ -926,32 +920,30 @@ class _TestResult(TestResult):
         # Usually one of addSuccess, addError or addFailure would have been called.
         # But there are some path in unittest that would bypass this.
         # We must disconnect stdout in stopTest(), which is guaranteed to be called.
-        if self.retry:
-            if self.status == 1:
-                self.trys += 1
-                if self.trys <= self.retry:
-                    if self.save_last_try:
-                        t = self.result.pop(-1)
-                        if t[0]==1:
-                            self.failure_count-=1
-                        else:
-                            self.error_count -= 1
-                    test=copy.copy(test)
-                    sys.stderr.write("Retesting... ")
-                    sys.stderr.write(str(test))
-                    sys.stderr.write('..%d \n' % self.trys)
-                    doc = test._testMethodDoc or ''
-                    if doc.find('_retry')!=-1:
-                        doc = doc[:doc.find('_retry')]
-                    desc ="%s_retry:%d" %(doc, self.trys)
-                    if not PY3K:
-                        if isinstance(desc, str):
-                            desc = desc.decode("utf-8")
-                    test._testMethodDoc = desc
-                    test(self)
-                else:
-                    self.status = 0
-                    self.trys = 0
+        if self.retry and self.status == 1:
+            self.trys += 1
+            if self.trys <= self.retry:
+                if self.save_last_try:
+                    t = self.result.pop(-1)
+                    if t[0]==1:
+                        self.failure_count-=1
+                    else:
+                        self.error_count -= 1
+                test=copy.copy(test)
+                sys.stderr.write("Retesting... ")
+                sys.stderr.write(str(test))
+                sys.stderr.write('..%d \n' % self.trys)
+                doc = test._testMethodDoc or ''
+                if doc.find('_retry')!=-1:
+                    doc = doc[:doc.find('_retry')]
+                desc ="%s_retry:%d" %(doc, self.trys)
+                if not PY3K and isinstance(desc, str):
+                    desc = desc.decode("utf-8")
+                test._testMethodDoc = desc
+                test(self)
+            else:
+                self.status = 0
+                self.trys = 0
         self.complete_output()
 
     def addSuccess(self, test):
@@ -974,9 +966,7 @@ class _TestResult(TestResult):
         _, _exc_str = self.errors[-1]
         output = self.complete_output()
         self.result.append((2, test, output, _exc_str))
-        if not getattr(test, "driver",""):
-            pass
-        else:
+        if getattr(test, "driver",""):
             try:
                 driver = getattr(test, "driver")
                 test.imgs.append(driver.get_screenshot_as_base64())
@@ -996,9 +986,7 @@ class _TestResult(TestResult):
         _, _exc_str = self.failures[-1]
         output = self.complete_output()
         self.result.append((1, test, output, _exc_str))
-        if not getattr(test, "driver",""):
-            pass
-        else:
+        if getattr(test, "driver",""):
             try:
                 driver = getattr(test, "driver")
                 test.imgs.append(driver.get_screenshot_as_base64())
@@ -1020,10 +1008,7 @@ class HTMLTestRunner(Template_mixin):
         self.save_last_try = save_last_try
         self.verbosity = verbosity
         self.path = ""
-        if title is None:
-            self.title = self.DEFAULT_TITLE
-        else:
-            self.title = title
+        self.title = self.DEFAULT_TITLE if title is None else title
         if description is None:
             self.description = self.DEFAULT_DESCRIPTION
         else:
@@ -1057,8 +1042,7 @@ class HTMLTestRunner(Template_mixin):
                 rmap[cls] = []
                 classes.append(cls)
             rmap[cls].append((n,t,o,e))
-        r = [(cls, rmap[cls]) for cls in classes]
-        return r
+        return [(cls, rmap[cls]) for cls in classes]
 
     def getReportAttributes(self, result):
         """
@@ -1068,13 +1052,13 @@ class HTMLTestRunner(Template_mixin):
         startTime = str(self.startTime)[:19]
         duration = str(self.stopTime - self.startTime)
         status = []
-        if result.success_count: status.append(u'通过 %s' % result.success_count)
-        if result.failure_count: status.append(u'失败 %s' % result.failure_count)
-        if result.error_count:   status.append(u'错误 %s' % result.error_count  )
-        if status:
-            status = ' '.join(status)
-        else:
-            status = 'none'
+        if result.success_count:
+            status.append(f'通过 {result.success_count}')
+        if result.failure_count:
+            status.append(f'失败 {result.failure_count}')
+        if result.error_count:
+            status.append(f'错误 {result.error_count}')
+        status = ' '.join(status) if status else 'none'
         return [
             (u'开始时间', startTime),
             (u'运行时长', duration),
@@ -1082,20 +1066,17 @@ class HTMLTestRunner(Template_mixin):
         ]
 
     def mkdir_json(self):
-        is_exists = os.path.exists(self.path)
-        # 判断结果
-        if not is_exists:
-            try:
-                # 如果不存在则创建目录
-                # 创建目录操作函数
-                with open(self.path, "w+") as f:
-                    f.write("var data = []")
-                return True
-            except Exception as e:
-                print(e)
-                return False
-        else:
+        if is_exists := os.path.exists(self.path):
             return True
+        try:
+            # 如果不存在则创建目录
+            # 创建目录操作函数
+            with open(self.path, "w+") as f:
+                f.write("var data = []")
+            return True
+        except Exception as e:
+            print(e)
+            return False
 
     def Write(self, title, heading, desc, data):
         try:
@@ -1105,50 +1086,40 @@ class HTMLTestRunner(Template_mixin):
                 data_json = eval(data_json)
                 if len(data_json) >= 10:
                     del data_json[0]
-                description = dict()
-                description["startTime"] = heading[0][1]
-                description["duration"] = heading[1][1]
+                description = {"startTime": heading[0][1], "duration": heading[1][1]}
                 if PY3K:
                     description["title"] = title
                     description["status"] = heading[2][1]
                     description["desc"] = desc
                     description["data"] = data
-                    status = heading[2][1].split(" ")
-                    for j in range(0, len(status)):
-                        if status[j] == "通过":
-                            description["success"] = str(status[j + 1])
-                        if status[j] == "失败":
-                            description["fail"] = str(status[j + 1])
-                        if status[j] == "错误":
-                            description["error"] = str(status[j + 1])
                 else:
                     description["title"] = title.encode("gbk")
                     description["status"] = heading[2][1].encode("gbk")
                     description["desc"] = desc.encode("gbk")
                     description["data"] = data.encode("gbk")
-                    status = heading[2][1].split(" ")
-                    for j in range(0, len(status)):
-                        if status[j] == u"通过":
-                            description["success"] = str(status[j + 1])
-                        if status[j] == u"失败":
-                            description["fail"] = str(status[j + 1])
-                        if status[j] == u"错误":
-                            description["error"] = str(status[j + 1])
+                status = heading[2][1].split(" ")
+                for j in range(len(status)):
+                    if status[j] == "通过":
+                        description["success"] = str(status[j + 1])
+                    if status[j] == "失败":
+                        description["fail"] = str(status[j + 1])
+                    if status[j] == "错误":
+                        description["error"] = str(status[j + 1])
                 data_json.append(description)
                 data_json = str(data_json)
                 f.seek(0)
                 f.truncate()
-                f.write(str("var data = " + data_json))
+                f.write(str(f"var data = {data_json}"))
         except IndexError:
             sys.stderr.write("JSON初始化内容有误! 初始化内容’var data = []‘")
 
     def generateReport(self, test, result):
         report_attrs = self.getReportAttributes(result)
-        generator = 'HTMLTestRunner %s' % __version__
+        generator = f'HTMLTestRunner {__version__}'
         stylesheet = self._generate_stylesheet()
         heading = self._generate_heading(report_attrs)
         report = self._generate_report(result)
-        self.path = os.path.splitext(self.stream.name)[0] + ".json"
+        self.path = f"{os.path.splitext(self.stream.name)[0]}.json"
         if self.mkdir_json():
             self.Write(saxutils.escape(self.title), report_attrs, saxutils.escape(self.description), report)
         ending = self._generate_ending()
@@ -1179,12 +1150,11 @@ class HTMLTestRunner(Template_mixin):
                 value = saxutils.escape(value),
             )
             a_lines.append(line)
-        heading = self.HEADING_TMPL % dict(
-            title = saxutils.escape(self.title),
-            parameters = ''.join(a_lines),
-            description = saxutils.escape(self.description)
+        return self.HEADING_TMPL % dict(
+            title=saxutils.escape(self.title),
+            parameters=''.join(a_lines),
+            description=saxutils.escape(self.description),
         )
-        return heading
 
     def _generate_report(self, result):
         rows = []
@@ -1201,69 +1171,73 @@ class HTMLTestRunner(Template_mixin):
             if cls.__module__ == "__main__":
                 name = cls.__name__
             else:
-                name = "%s.%s" % (cls.__module__, cls.__name__)
+                name = f"{cls.__module__}.{cls.__name__}"
             doc = cls.__doc__ and cls.__doc__.split("\n")[0] or ""
-            desc = doc and '%s: %s' % (name, doc) or name
+            desc = doc and f'{name}: {doc}' or name
 
             row = self.REPORT_CLASS_TMPL % dict(
-                style = ne > 0 and 'errorClass' or nf > 0 and 'failClass' or 'passClass',
-                desc = desc,
-                count = np+nf+ne,
-                Pass = np,
-                fail = nf,
-                error = ne,
-                cid = 'c%s' % (cid+1),
+                style=ne > 0
+                and 'errorClass'
+                or nf > 0
+                and 'failClass'
+                or 'passClass',
+                desc=desc,
+                count=np + nf + ne,
+                Pass=np,
+                fail=nf,
+                error=ne,
+                cid=f'c{cid + 1}',
             )
             rows.append(row)
 
             for tid, (n,t,o,e) in enumerate(cls_results):
                 self._generate_report_test(rows, cid, tid, n, t, o, e)
 
-        report = self.REPORT_TMPL % dict(
-            test_list = ''.join(rows),
-            count = str(result.success_count+result.failure_count+result.error_count),
-            Pass = str(result.success_count),
-            fail = str(result.failure_count),
-            error = str(result.error_count),
-            passrate = str("%.2f%%" % (float(result.success_count) /
-                                     float(result.success_count + result.failure_count + result.error_count) * 100)
-                         ),
+        return self.REPORT_TMPL % dict(
+            test_list=''.join(rows),
+            count=str(
+                result.success_count + result.failure_count + result.error_count
+            ),
+            Pass=str(result.success_count),
+            fail=str(result.failure_count),
+            error=str(result.error_count),
+            passrate=str(
+                "%.2f%%"
+                % (
+                    float(result.success_count)
+                    / float(
+                        result.success_count
+                        + result.failure_count
+                        + result.error_count
+                    )
+                    * 100
+                )
+            ),
         )
-        return report
 
     def _generate_chart(self, result):
-        chart = self.ECHARTS_SCRIPT % dict(
+        return self.ECHARTS_SCRIPT % dict(
             Pass=str(result.success_count),
             fail=str(result.failure_count),
             error=str(result.error_count),
         )
-        return chart
 
     def _generate_report_test(self, rows, cid, tid, n, t, o, e):
         # e.g. 'pt1.1', 'ft1.1', etc
         has_output = bool(o or e)
-        tid = (n == 0 and 'p' or 'f') + 't%s.%s' % (cid + 1, tid + 1)
+        tid = (n == 0 and 'p' or 'f') + f't{cid + 1}.{tid + 1}'
         name = t.id().split('.')[-1]
-        if self.verbosity > 1:
-            doc = t._testMethodDoc or ''
-        else:
-            doc = ""
-
-        desc = doc and ('%s: %s' % (name, doc)) or name
-        if not PY3K:
-            if isinstance(desc, str):
-                desc = desc.decode("utf-8")
+        doc = t._testMethodDoc or '' if self.verbosity > 1 else ""
+        desc = doc and f'{name}: {doc}' or name
+        if not PY3K and isinstance(desc, str):
+            desc = desc.decode("utf-8")
         tmpl = has_output and self.REPORT_TEST_WITH_OUTPUT_TMPL or self.REPORT_TEST_NO_OUTPUT_TMPL
 
         # o and e should be byte string because they are collected from stdout and stderr?
-        if isinstance(o, str):
-            # uo = unicode(o.encode('string_escape'))
-            if PY3K:
-                uo = o
-            else:
-                uo = o.decode('utf-8', 'ignore')
-        else:
+        if isinstance(o, str) and PY3K or not isinstance(o, str):
             uo = o
+        else:
+            uo = o.decode('utf-8', 'ignore')
         if isinstance(e, str):
             # ue = unicode(e.encode('string_escape'))
             if PY3K:

@@ -33,14 +33,14 @@ class Test_api(unittest.TestCase):
     @ddt.data(*testdata)
     def test_api(self, data):
         # try:
-            # 调用发送方法，传递参数
-            res = base_api.send_requests(self.s, data)
-            #调用写入方法
-            base_api.wirte_result(res, filename=reportxlsx)
-            # 读取文件中的期望结果
-            check = data["checkpoint"]
-            # 接口返回的结果
-            res_text = res["text"]
+        # 调用发送方法，传递参数
+        res = base_api.send_requests(self.s, data)
+        #调用写入方法
+        base_api.wirte_result(res, filename=reportxlsx)
+        # 读取文件中的期望结果
+        check = data["checkpoint"]
+        # 接口返回的结果
+        res_text = res["text"]
             # try:
             #     check_read = json.loads(check)
             #     res_read = json.loads(res_text)
@@ -49,9 +49,9 @@ class Test_api(unittest.TestCase):
             # except Exception as e:
             #     print(e)
 
-            print("期望结果->：%s" % check)
-            print("实际结果->：%s" % res_text)
-            self.assertIn(check , res_text,'测试失败')
+        print(f"期望结果->：{check}")
+        print(f"实际结果->：{res_text}")
+        self.assertIn(check , res_text,'测试失败')
 if __name__ == "__main__":
     unittest.main()
 

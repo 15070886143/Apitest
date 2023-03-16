@@ -19,8 +19,7 @@ class readconfig:
         return mail_host,Smtp_Sender,Smtp_Password,Smtp_Receivers,concont
 
     def db_read(self):
-        usermame = self.config.get_db('username')
-        return usermame
+        return self.config.get_db('username')
 
 
 

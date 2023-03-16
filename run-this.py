@@ -21,18 +21,17 @@ def run_case(all_case, reportpath=report_path):
     '''执行所有的用例, 并把结果写入测试报告'''
     htmlreport = reportpath+r"\result.html"
     xlsxreport = reportpath+r"\result.xlsx"
-    print("测试报告生成地址：%s"% htmlreport)
-    fp = open(htmlreport, "wb")
-    runner = HTMLTestRunner_Chart.HTMLTestRunner(
-        stream=fp,
-        title=u'自动化测试报告',
-        description='详细测试用例结果',
-        # tester=u"杨盼"
-    )
-    # 调用add_case函数返回值
-    runner.run(all_case)
-    readmail.sendMail(htmlreport,xlsxreport)
-    fp.close()
+    print(f"测试报告生成地址：{htmlreport}")
+    with open(htmlreport, "wb") as fp:
+        runner = HTMLTestRunner_Chart.HTMLTestRunner(
+            stream=fp,
+            title=u'自动化测试报告',
+            description='详细测试用例结果',
+            # tester=u"杨盼"
+        )
+        # 调用add_case函数返回值
+        runner.run(all_case)
+        readmail.sendMail(htmlreport,xlsxreport)
 if __name__ == "__main__":
     cases = add_case()
     run_case(cases)
